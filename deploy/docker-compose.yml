@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: essence_network
+      POSTGRES_USER: essence
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../database/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U essence -d essence_network"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ../server
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD","wget","-qO-","http://localhost:8080/api/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
