@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Essence Network — Master Control</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">E</div><div><strong>essence</strong><span>network</span></div></div>
+    <div class="status"><i></i> SYSTEM ONLINE</div>
+    <nav id="nav">
+      <button data-view="overview" class="active">◈ Overview</button>
+      <button data-view="editorial">▣ Editorial</button>
+      <button data-view="production">▶ Production</button>
+      <button data-view="epg">▤ TV Guide / EPG</button>
+      <button data-view="live">● Live Control</button>
+      <button data-view="router">⇄ Stream Router</button>
+      <button data-view="media">◫ Media</button>
+      <button data-view="website">⌂ Website</button>
+      <button data-view="users">♙ Users & Roles</button>
+      <button data-view="audit">≡ Audit Log</button>
+    </nav>
+    <div class="sidebar-foot">WHERE ESSENCE MEETS EXPRESSION</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div><button class="menu" id="menu">☰</button><div><h1 id="title">Master Control</h1><small>Production operations console</small></div></div>
+      <div class="top-actions"><span id="clock"></span><span class="pill">ADMIN</span><button id="logout" class="danger">Sign out</button></div>
+    </header>
+
+    <section class="content">
+      <div id="flash"></div>
+
+      <section id="overview" class="view active">
+        <div class="hero">
+          <div><span class="eyebrow">ESSENCE NETWORK</span><h2>Production Control Room</h2><p>One control surface for editorial, programming, EPG, live television, media and publishing.</p></div>
+          <div class="onair"><span class="dot"></span><strong id="onairLabel">ON AIR</strong><small id="onairProgram">Loading…</small></div>
+        </div>
+        <div class="grid stats">
+          <div class="card stat"><span>LIVE STATUS</span><b id="sLive">—</b><small id="sLiveSub">—</small></div>
+          <div class="card stat"><span>PUBLISHED STORIES</span><b id="sStories">—</b><small>Editorial desk</small></div>
+          <div class="card stat"><span>EPG ENTRIES</span><b id="sEpg">—</b><small>Schedule</small></div>
+          <div class="card stat"><span>MEDIA ASSETS</span><b id="sMedia">—</b><small>Library</small></div>
+        </div>
+        <div class="grid two">
+          <div class="card"><div class="card-head"><h3>Quick actions</h3></div>
+            <div class="actions">
+              <button class="action" data-go="editorial">＋ New story</button>
+              <button class="action" data-go="production">＋ Programme</button>
+              <button class="action" data-go="epg">＋ Schedule entry</button>
+              <button class="action" data-go="live">● Live control</button>
+              <button class="action" data-go="media">＋ Media asset</button>
+              <button class="action" data-go="website">⌂ Website</button>
+            </div>
+          </div>
+          <div class="card"><div class="card-head"><h3>Operational safety</h3></div>
+            <ul class="checks">
+              <li><span>Authentication & RBAC</span><b class="ok">READY</b></li>
+              <li><span>Audit logging</span><b class="ok">READY</b></li>
+              <li><span>Emergency state</span><b class="ok">READY</b></li>
+              <li><span>Primary/backup stream</span><b class="warn">CONFIGURE</b></li>
+              <li><span>PostgreSQL backup</span><b class="warn">CONFIGURE</b></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="editorial" class="view">
+        <div class="section-head"><div><h2>Editorial Desk</h2><p>Create, edit and publish stories.</p></div><button class="primary" id="newStory">＋ New story</button></div>
+        <div class="card"><div class="table-wrap"><table><thead><tr><th>Headline</th><th>Category</th><th>Status</th><th>Updated</th></tr></thead><tbody id="stories"></tbody></table></div></div>
+      </section>
+
+      <section id="production" class="view">
+        <div class="section-head"><div><h2>Production</h2><p>Programmes, episodes and production notes.</p></div><button class="primary" id="newProgramme">＋ Programme</button></div>
+        <div class="card"><div class="table-wrap"><table><thead><tr><th>Programme</th><th>Genre</th><th>Duration</th><th>Status</th></tr></thead><tbody id="programmes"></tbody></table></div></div>
+      </section>
+
+      <section id="epg" class="view">
+        <div class="section-head"><div><h2>TV Guide / EPG</h2><p>Control the published programme schedule.</p></div><button class="primary" id="newSchedule">＋ Schedule entry</button></div>
+        <div class="card"><div class="table-wrap"><table><thead><tr><th>Start</th><th>Programme</th><th>Duration</th><th>Status</th></tr></thead><tbody id="schedule"></tbody></table></div></div>
+      </section>
+
+      <section id="live" class="view">
+        <div class="section-head"><div><h2>Live Control</h2><p>Master control for the live channel state.</p></div><span id="liveBadge" class="live-badge">● ON AIR</span></div>
+        <div class="grid two">
+          <div class="card control-card">
+            <h3>Channel state</h3>
+            <label>State<select id="liveState"><option value="on_air">ON AIR</option><option value="off_air">OFF AIR</option><option value="no_signal">NO SIGNAL</option><option value="emergency">EMERGENCY</option></select></label>
+            <label>Programme<input id="liveProgram" placeholder="Current programme"></label>
+            <label>Now / message<input id="liveMessage" placeholder="Live message or status"></label>
+            <label>Primary HLS URL<input id="primaryStream" placeholder="https://…/master.m3u8"></label>
+            <label>Backup HLS URL<input id="backupStream" placeholder="https://…/backup.m3u8"></label>
+            <button class="primary" id="saveLive">Save live configuration</button>
+          </div>
+          <div class="card"><h3>Safety controls</h3>
+            <button class="wide danger-btn" id="emergency">ACTIVATE EMERGENCY STATE</button>
+            <button class="wide" id="nosignal">SHOW NO SIGNAL</button>
+            <button class="wide" id="onair">RETURN TO ON AIR</button>
+            <p class="note">These controls update the channel metadata/state. A real encoder/CDN must be connected for actual signal switching.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="router" class="view">
+<div class="section-head"><div><h2>Stream Router</h2><p>Select the source for the programme output.</p></div><span class="live-badge" id="routeState">PRIMARY</span></div>
+<div class="grid two"><div class="card"><h3>Program output</h3>
+<div class="route-grid">
+<button class="route" data-route="primary">PRIMARY<small>Main live programme</small></button>
+<button class="route" data-route="backup">BACKUP<small>Continuity feed</small></button>
+<button class="route" data-route="no_signal">NO SIGNAL<small>Fallback slate</small></button>
+<button class="route danger-route" data-route="emergency">EMERGENCY<small>Emergency feed</small></button>
+</div><p class="note">This records the selected route centrally. A real broadcast router/automation system must consume this state to perform the physical or software switch.</p></div>
+<div class="card"><h3>Configured sources</h3><div id="sources"></div></div></div>
+</section>
+<section id="media" class="view">
+        <div class="section-head"><div><h2>Media Library</h2><p>Track video, audio, images and broadcast assets.</p></div><button class="primary" id="newMedia">＋ Media asset</button></div>
+        <div class="card"><div class="table-wrap"><table><thead><tr><th>Asset</th><th>Type</th><th>Storage</th><th>Status</th></tr></thead><tbody id="mediaRows"></tbody></table></div></div>
+      </section>
+
+      <section id="website" class="view">
+        <div class="section-head"><div><h2>Website Control</h2><p>Manage public-facing settings and publishing switches.</p></div></div>
+        <div class="grid two">
+          <div class="card settings">
+            <label>Site headline<input id="siteHeadline" value="WHERE ESSENCE MEETS EXPRESSION"></label>
+            <label>Homepage announcement<textarea id="announcement">Essence Network is live.</textarea></label>
+            <label>Breaking-news banner<select id="breaking"><option>Off</option><option>On</option></select></label>
+            <button class="primary" id="saveWebsite">Save website settings</button>
+          </div>
+          <div class="card"><h3>Publishing pipeline</h3><div class="pipeline"><span>CMS</span><b>→</b><span>API</span><b>→</b><span>Website</span><b>→</b><span>Android</span></div><p class="note">Content updates should flow from the CMS without rebuilding the Android app.</p></div>
+        </div>
+      </section>
+
+      <section id="users" class="view">
+        <div class="section-head"><div><h2>Users & Roles</h2><p>Least-privilege access for production operations.</p></div></div>
+        <div class="grid roles">
+          <div class="card"><b>Super Admin</b><p>All controls, users, security and configuration.</p></div>
+          <div class="card"><b>Managing Editor</b><p>Editorial, publishing, programmes and EPG.</p></div>
+          <div class="card"><b>News Editor</b><p>Stories, breaking news and newsroom workflow.</p></div>
+          <div class="card"><b>Producer</b><p>Programmes, EPG, live and production.</p></div>
+          <div class="card"><b>Journalist</b><p>Create and edit assigned stories.</p></div>
+          <div class="card"><b>Video Editor</b><p>Media assets and video workflow.</p></div>
+        </div>
+      </section>
+
+      <section id="audit" class="view">
+        <div class="section-head"><div><h2>Audit Log</h2><p>Trace important production actions.</p></div></div>
+        <div class="card"><div class="table-wrap"><table><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Area</th></tr></thead><tbody id="auditRows"></tbody></table></div></div>
+      </section>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="modal"><div class="modal-box"><button class="close" id="close">×</button><h3 id="modalTitle">New item</h3><div id="modalBody"></div></div></div>
+<script src="admin.js"></script>
+</body>
+</html>

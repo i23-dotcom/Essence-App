@@ -1,1 +1,8 @@
-
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Essence Network — Control Login</title>
+<style>body{margin:0;background:#061018;color:#eef6ff;font-family:Arial;display:grid;place-items:center;min-height:100vh}.box{width:min(400px,90vw);padding:28px;background:#0a1822;border:1px solid #21475b;border-radius:14px}h1{margin:0 0 6px}.sub{color:#7895a5;font-size:12px;margin-bottom:20px}label{display:block;font-size:12px;color:#9bb0bd;margin:14px 0}input{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:11px;background:#061018;border:1px solid #24495c;border-radius:7px;color:#fff}button{width:100%;margin-top:15px;padding:11px;border:0;border-radius:7px;background:#1979bd;color:#fff;font-weight:700}.err{color:#ff9da7;font-size:12px;margin-top:12px}.mark{width:48px;height:48px;background:#fff;color:#061018;border-radius:10px;display:grid;place-items:center;font-size:27px;font-weight:900}</style></head>
+<body><div class="box"><div class="mark">E</div><h1>Master Control</h1><div class="sub">Essence Network · Production Operations</div>
+<label>Email<input id="email" type="email" autocomplete="username"></label><label>Password<input id="password" type="password" autocomplete="current-password"></label><button id="login">Sign in</button><div id="err" class="err"></div></div>
+<script>
+const API=(localStorage.getItem("essence_api")||"http://localhost:8080/api").replace(/\/$/,"");
+document.getElementById("login").onclick=async()=>{err.textContent="";try{const r=await fetch(API+"/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:email.value,password:password.value})});const d=await r.json();if(!r.ok)throw Error(d.error||"Login failed");localStorage.setItem("essence_token",d.token);location.href="index.html"}catch(e){err.textContent=e.message}};
+</script></body></html>
