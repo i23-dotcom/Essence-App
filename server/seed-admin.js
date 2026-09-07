@@ -1,0 +1,3 @@
+require("dotenv").config();
+const bcrypt=require("bcryptjs"),{Pool}=require("pg");
+(async()=>{const p=new Pool({connectionString:process.env.DATABASE_URL,ssl:process.env.DB_SSL==="true"?{rejectUnauthorized:false}:false});const email=process.env.ADMIN_EMAIL,pass=process.env.ADMIN_PASSWORD;if(!email||!pass)throw new Error("Set ADMIN_EMAIL and ADMIN_PASSWORD");const hash=await bcrypt.hash(pass,12);await p.query(`INSERT INTO users(email,password_hash,role) VALUES($1,$2,'admin') ON CONFLICT(email) DO UPDATE SET password_hash=EXCLUDED.password_hash,role='admin',active=true`,[email]);console.log("Admin seeded:",email);await p.end()})().catch(e=>{console.error(e);process.exit(1)})
