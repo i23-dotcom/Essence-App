@@ -75,3 +75,45 @@ This repository contains the player/interface code. Only use streams, playlists,
 ## License
 
 Released under the MIT License. See `LICENSE`.
+
+
+## 📱 Android APK
+
+This repository includes an Android WebView wrapper that bundles the same `index.html` app.
+
+### Automatic APK build
+
+Push the repository to GitHub. The workflow:
+
+`.github/workflows/android-apk.yml`
+
+automatically builds:
+
+`Essence-Network-Explora.apk`
+
+To get the APK:
+
+1. Open the repository on GitHub.
+2. Open **Actions**.
+3. Select **Build Essence Network Explora APK**.
+4. Open the completed workflow run.
+5. Under **Artifacts**, download **Essence-Network-Explora**.
+6. The artifact contains `Essence-Network-Explora.apk`.
+
+The APK is currently a **debug APK** intended for testing/sideloading. A production Play Store release should use a signed release build with a private keystore.
+
+### Android project
+
+```text
+android/
+├── app/
+│   ├── src/main/
+│   │   ├── AndroidManifest.xml
+│   │   ├── assets/index.html
+│   │   ├── java/com/essence/network/MainActivity.java
+│   │   └── res/
+│   └── build.gradle
+├── build.gradle
+├── gradle.properties
+└── settings.gradle
+```
