@@ -1345,7 +1345,7 @@ body.channel-grid-mode .channels-grid::-webkit-scrollbar-thumb{background:rgba(5
             <div class="row"><span>Tuner 1 Frequency</span><b>1210</b></div>
             <div class="row"><span>Tuner 2 Frequency</span><b>1420</b></div>
             <div class="row"><span>Tuner 3 Frequency</span><b>1680</b></div>
-            <input type="file" id="m3uFileInput" accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl" hidden>
+            <input type="file" id="m3uFileInput" accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl,application/x-mpegurl,text/plain,*/*" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;" aria-hidden="true">
           </div>
           <div class="monitor">
             <h4>Signal Strength Monitor</h4>
@@ -3365,7 +3365,33 @@ document.getElementById('m3uLoad')?.addEventListener('click', () => {
 
 m3uUrl?.addEventListener('keydown', (e) => { if(e.key === 'Enter') document.getElementById('m3uLoad')?.click(); });
 
-document.getElementById('m3uAttach')?.addEventListener('click', () => m3uFileInput?.click());
+window.handleNativeM3UFile = function(name, text){
+  try{
+    const safeName = String(name || 'Attached.m3u');
+    const safeText = String(text || '');
+    let chans = parseM3U(safeText);
+    if(chans.length === 0) chans = parseHLSAsChannel(safeText, location.href);
+    const base = safeName.replace(/\.(m3u8?)$/i, '') || 'Attached';
+    if(chans.length === 0){
+      toast('⚠ No valid M3U/M3U8 channels found', 'warn');
+      return;
+    }
+    PLAYLISTS.push({ name: base, source:'File · ' + safeName, isDemo:false, channels: chans });
+    playlistIndex = PLAYLISTS.length - 1;
+    renderPlaylist(); renderPlaylistInfo(); renderChannelsGrid(); renderAudioList();
+    toast('✓ Attached ' + chans.length + ' channels', 'good');
+  }catch(err){
+    toast('⚠ Could not process M3U: ' + (err.message || 'Invalid file'), 'warn');
+  }
+};
+
+document.getElementById('m3uAttach')?.addEventListener('click', () => {
+  if(window.AndroidFileBridge && typeof window.AndroidFileBridge.openM3UFile === 'function'){
+    window.AndroidFileBridge.openM3UFile();
+  }else{
+    m3uFileInput?.click();
+  }
+});
 
 m3uFileInput?.addEventListener('change', () => {
   const f = m3uFileInput.files[0];
