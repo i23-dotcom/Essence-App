@@ -2,58 +2,48 @@ name: Build Essence Network Explora APK
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: android-apk-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  build-apk:
-    name: Build Android APK
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
-          cache: gradle
+          java-version: "17"
 
-      - name: Set up Gradle 8.9
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.9'
-          cache-cleanup: on-success
+          gradle-version: "8.9"
 
-      - name: Verify Android project
-        working-directory: android
-        run: gradle --version
+      - name: Sync web app into Android assets
+        run: |
+          mkdir -p android/app/src/main/assets
+          cp index.html android/app/src/main/assets/index.html
 
       - name: Build debug APK
         working-directory: android
-        run: gradle --no-daemon --stacktrace :app:assembleDebug
+        run: gradle --no-daemon :app:assembleDebug
 
-      - name: Prepare APK artifact
+      - name: Rename APK
         run: |
-          set -euo pipefail
           mkdir -p release
-          cp android/app/build/outputs/apk/debug/app-debug.apk release/Essence-Network-Explora.apk
-          ls -lh release/Essence-Network-Explora.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk                  release/Essence-Network-Explora.apk
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: Essence-Network-Explora
           path: release/Essence-Network-Explora.apk
           if-no-files-found: error
-          retention-days: 30
