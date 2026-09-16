@@ -1,0 +1,17 @@
+{
+  "name": "Essence Network Explora",
+  "short_name": "Essence Network",
+  "description": "Essence Network IPTV, VOD and local media player.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#020b18",
+  "theme_color": "#031a33",
+  "icons": [
+    {
+      "src": "assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
